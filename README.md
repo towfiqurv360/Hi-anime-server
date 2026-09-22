@@ -142,7 +142,7 @@ bun install
 bun run dev
 ```
 
-The server will be running at [http://localhost:3030](http://localhost:3030)
+The server will be running at [http://localhost:10000](http://localhost:10000) by default. You can override the port with the `PORT` environment variable.
 
 ---
 
@@ -162,15 +162,15 @@ docker build -t hianime-api .
 **Run the container:**
 
 ```bash
-docker run -p 3030:3030 hianime-api
+docker run -p 10000:10000 hianime-api
 ```
 
 **With environment variables:**
 
 ```bash
-docker run -p 3030:3030 \
+docker run -p 10000:10000 \
   -e NODE_ENV=production \
-  -e PORT=3030 \
+  -e PORT=10000 \
   hianime-api
 ```
 
@@ -185,13 +185,13 @@ services:
   hianime-api:
     build: .
     ports:
-      - "3030:3030"
+      - "10000:10000"
     environment:
       - NODE_ENV=production
-      - PORT=3030
+      - PORT=10000
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3030/"]
+      test: ["CMD", "curl", "-f", "http://localhost:10000/ping"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -1383,5 +1383,37 @@ If you find this project useful, please consider giving it a star on GitHub!
 [Report Bug](https://github.com/ryanwtf7/hianime-api/issues) • [Request Feature](https://github.com/ryanwtf7/hianime-api/issues)
 
 </div>
-#   H i - a n i m e - s e r v e r  
- 
+
+### Render Web Service Deployment
+
+This project can be deployed on Render using the native Node runtime with Bun.
+
+Recommended Render settings:
+
+- Runtime: `Node`
+- Build Command: `bun install`
+- Start Command: `bun run start`
+- Plan: `Free` (or a paid plan if you need always-on capacity)
+
+Render automatically provides the `PORT` environment variable. The server reads `PORT`
+and binds to `0.0.0.0`, so no Render-specific port change is required in the source code.
+
+For production CORS, set:
+
+```text
+ALLOWED_ORIGINS=https://your-frontend-domain.com
+```
+
+For multiple frontend origins:
+
+```text
+ALLOWED_ORIGINS=https://your-frontend-domain.com,http://localhost:3000
+```
+
+Health check:
+
+```text
+GET /ping
+```
+
+A successful response has `status: "ok"`.

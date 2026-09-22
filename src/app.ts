@@ -21,7 +21,9 @@ app.use(
     allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     exposeHeaders: ['Content-Length', 'X-Request-Id'],
     maxAge: 600,
-    credentials: true,
+    // Browsers reject wildcard origins together with credentials. Keep credentials
+    // enabled only when a specific origin (or list of origins) is configured.
+    credentials: origins !== '*',
   })
 );
 
